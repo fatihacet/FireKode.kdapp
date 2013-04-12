@@ -1,0 +1,36 @@
+{
+  "devMode": true,
+  "version": "0.1",
+  "name": "FireMirror",
+  "identifier": "com.koding.apps.firemirror",
+  "path": "~/Applications/FireMirror.kdapp",
+  "homepage": "fatihacet.koding.com/firemirror",
+  "author": "Fatih Acet",
+  "repository": "git://github.com/fatihacet/firemirror.kdapp.git",
+  "description": "FireMirror : a Koding application created with the blank template.",
+  "category": "web-app",
+  "source": {
+    "blocks": {
+      "app": {
+        "files": [
+          "./app/lib/firebase.all.js",
+          "./app/lib/firepad/examples/codemirror/lib/codemirror.js",
+          "./app/lib/firepad/examples/codemirror/mode/javascript/javascript.js",
+          "./app/lib/firepad.js",
+          "./index.coffee"
+        ]
+      }
+    },
+    "stylesheets": [
+      "./app/lib/firepad/examples/codemirror/lib/codemirror.css",
+      "./app/lib/firepad/lib/firepad.css",
+      "./resources/style.css"
+    ]
+  },
+  "options": {
+    "type": "tab"
+  },
+  "icns": {
+    "128": "./resources/icon.128.png"
+  }
+}

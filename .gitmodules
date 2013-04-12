@@ -1,0 +1,6 @@
+[submodule "firepad"]
+	path = firepad
+	url = https://github.com/firebase/firepad.git
+[submodule "app/lib/firepad"]
+	path = app/lib/firepad
+	url = git://github.com/firebase/firepad.git
