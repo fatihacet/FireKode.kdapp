@@ -17,13 +17,15 @@
           "./app/lib/firepad/examples/codemirror/lib/codemirror.js",
           "./app/lib/firepad/examples/codemirror/mode/javascript/javascript.js",
           "./app/lib/firepad.js",
+          
+          "./app/FireMirrorHeader.coffee",
+          "./app/FireMirror.coffee",
+          
           "./index.coffee"
         ]
       }
     },
     "stylesheets": [
-      "./app/lib/firepad/examples/codemirror/lib/codemirror.css",
-      "./app/lib/firepad/lib/firepad.css",
       "./resources/style.css"
     ]
   },
