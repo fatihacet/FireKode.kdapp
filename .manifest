@@ -18,8 +18,9 @@
           "./app/lib/firepad/examples/codemirror/mode/javascript/javascript.js",
           "./app/lib/firepad.js",
           
-          "./app/FireMirrorHeader.coffee",
-          "./app/FireMirror.coffee",
+          "./app/FireKodeInviteView.coffee",
+          "./app/FireKodeHeader.coffee",
+          "./app/FireKode.coffee",
           
           "./index.coffee"
         ]
