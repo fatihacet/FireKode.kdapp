@@ -6,6 +6,8 @@ class FireKode extends JView
     
     super options, data
     
+    @sessionKey = @getOptions().sessionKey or "#{KD.utils.generatePassword 18, no}-#{KD.utils.getRandomNumber 9999}-#{KD.utils.generatePassword 18, no}"
+    
     @header = new FireKodeHeader
       delegate: @
     
@@ -13,19 +15,29 @@ class FireKode extends JView
       domId : "firekode-container#{KD.utils.getRandomNumber()}"
     
     @container.on "viewAppended", =>
-      @firepadRef = new Firebase("https://firemirror.firebaseIO.com/").child "12345"
+      @firepadRef = new Firebase("https://firemirror.firebaseIO.com/").child @sessionKey
     
       @codeMirrorEditor = CodeMirror @container.$()[0],
-        lineNumbers: true
-        mode: 'javascript'
+        lineNumbers : true
+        mode        : "javascript"
     
-      @firepad = Firepad.fromCodeMirror @firepadRef, @codeMirrorEditor
-      
-      @firepad.on "ready", =>
-        if @firepad.isHistoryEmpty()
-          @firepad.setText '// JavaScript Editing with Firepad!\nfunction go() {\n  var message = "Hello, world.";\n  console.log(message);\n}'
+      KD.utils.wait 300, =>
+        @firepad = Firepad.fromCodeMirror @firepadRef, @codeMirrorEditor
+        
+        @firepad.on "ready", =>
+          if @firepad.isHistoryEmpty()
+            @firepad.setText """
+              // JavaScript Editing with Firepad!
+              function go() {
+                var message = "Hello, world.";
+                console.log(message);
+              }
+            """
+        
+        appView.getSubViews()[0].destroy() if @getOptions().restoredSession
     
-    @inviteView = new FireKodeInviteView()
+    @inviteView = new FireKodeInviteView
+      delegate    : @
           
     @splitView = new KDSplitView
       cssClass    : "firekode-split-view"
@@ -34,7 +46,20 @@ class FireKode extends JView
       animated    : yes
       sizes       : [ "100%", null ]
       views       : [ @container, @inviteView ]
-          
+      
+  joinSession: (key) ->
+    appView.destroySubViews()
+    appView.addSubView @sessionLoading = new KDLoaderView
+      title   : "Loading your session"
+      size    :
+        width : 48
+        
+    @sessionLoading.show()
+    
+    appView.addSubView new FireKode
+      sessionKey      : key
+      restoredSession : yes
+      
   pistachio: ->
     """
       {{> @header}}
