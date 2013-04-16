@@ -1,4 +1,4 @@
-FireMirror.kdapp
+FireKode.kdapp
 ================
 
-Firepad with CodeMirror
+FireKode: Collaborative IDE for Koding built with Firepad.
