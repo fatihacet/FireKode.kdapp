@@ -1,13 +1,13 @@
 {
   "devMode": true,
   "version": "0.1",
-  "name": "FireMirror",
-  "identifier": "com.koding.apps.firemirror",
-  "path": "~/Applications/FireMirror.kdapp",
-  "homepage": "fatihacet.koding.com/firemirror",
+  "name": "FireKode",
+  "identifier": "com.koding.apps.firekode",
+  "path": "~/Applications/FireKode.kdapp",
+  "homepage": "fatihacet.koding.com/firekode",
   "author": "Fatih Acet",
-  "repository": "git://github.com/fatihacet/firemirror.kdapp.git",
-  "description": "FireMirror : a Koding application created with the blank template.",
+  "repository": "git://github.com/fatihacet/firekode.kdapp.git",
+  "description": "FireKode: Collaborative IDE for Koding built with Firepad.",
   "category": "web-app",
   "source": {
     "blocks": {
