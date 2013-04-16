@@ -1,5 +1,10 @@
 /* firemirror.css */
-
+.completed-items {
+  height: 50px;
+}
+.firekode-invite-view {
+  height: 50px;
+}
 
 /* firepad.css */
 .firepad {
