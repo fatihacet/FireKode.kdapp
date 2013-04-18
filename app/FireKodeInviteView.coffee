@@ -35,9 +35,13 @@ class FireKodeInviteView extends JView
       callback : =>
         accounts  = @userController.getSelectedItemData()
         @sendRequest account.profile.nickname for account in accounts when account
-        
     
     @inviteButton.disable()
+    
+    @doneButton = new KDButtonView
+      title    : "Done"
+      callback : =>
+        @getDelegate().splitView.resizePanel 0, 1
     
   sendRequest: (to) ->
     {profile}  = KD.whoami()
@@ -70,4 +74,5 @@ class FireKodeInviteView extends JView
       {{> @wrapper}}
       {{> @userController.getView()}}
       {{> @inviteButton}}
+      {{> @doneButton}}
     """
