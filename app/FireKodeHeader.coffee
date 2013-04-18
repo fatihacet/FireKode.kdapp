@@ -7,7 +7,19 @@ class FireKodeHeader extends JView
     super options, data
     
     @buttonsContainer = new KDView
-      cssClass  : "header-buttons"
+      cssClass  : "header-buttons firekode-header-buttons"
+      
+    @buttonsContainer.addSubView new KDCustomHTMLView
+      cssClass  : "editor-button firekode-question-mark"
+      partial   : ""
+      click     : =>
+        new KDModalView
+          overlay  : yes
+          title    : "About FireKode"
+          cssClass : "firekode-modal"
+          content  : """
+            Your session key is: #{@getDelegate().sessionKey}
+          """
       
     @buttonsContainer.addSubView new KDButtonView
       cssClass  : "editor-button"

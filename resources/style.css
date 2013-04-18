@@ -5,6 +5,18 @@
 .firekode-invite-view {
   height: 50px;
 }
+.firekode-question-mark {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: url(https://koding.com/images/_kd.sprites.png) -258px -437px;
+  cursor: pointer;
+  right: 168px;
+  top: 7px;
+}
+.firekode-header-buttons {
+  padding: 6px 8px 4px 40px !important;
+}
 
 /* firepad.css */
 .firepad {
