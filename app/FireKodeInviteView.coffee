@@ -34,7 +34,7 @@ class FireKodeInviteView extends JView
       title    : "Invite"
       callback : =>
         accounts  = @userController.getSelectedItemData()
-        @sendRequest account.profile.nickname for account in accounts when account
+        @sendRequest account for account in accounts when account
     
     @inviteButton.disable()
     
@@ -42,8 +42,12 @@ class FireKodeInviteView extends JView
       title    : "Done"
       callback : =>
         @getDelegate().splitView.resizePanel 0, 1
+        
+    @userList = new KDView 
+      cssClass : "firekode-user-list"
     
-  sendRequest: (to) ->
+  sendRequest: (userAccount) ->
+    to         = userAccount.profile.nickname
     {profile}  = KD.whoami()
     {nickname} = profile
     userName   = "#{profile.firstName} #{profile.lastName} (@#{nickname})"
@@ -66,7 +70,14 @@ class FireKodeInviteView extends JView
       to
       subject
       body
-    } 
+    }
+    
+    @getDelegate().emit "FireKodeUserInvited", to
+    
+    @showUserInList userAccount
+  
+  showUserInList: (userAccount) ->
+    @userList.addSubView new FireKodeUser {}, userAccount
   
   pistachio: ->
     """
@@ -75,4 +86,47 @@ class FireKodeInviteView extends JView
       {{> @userController.getView()}}
       {{> @inviteButton}}
       {{> @doneButton}}
+      {{> @userList}}
     """
+    
+    
+class FireKodeUser extends JView
+
+  constructor: (options = {}, data) ->
+    
+    options.cssClass = "firekode-user"
+    
+    super options, data
+    
+    @avatarView = new AvatarView
+      size     : 
+        width  : 36
+        height : 36
+    , @getData()
+    
+    @userStatus = new KDView
+      partial  : "Invited"
+    
+  updateStatus: (newStatusText) ->
+    @userStatus.updatePartial newStatusText
+  
+  pistachio: ->
+    {profile} = @getData()
+    """
+      {{> @avatarView}}
+      <div class="firekode-user-details">
+        #{profile.firstName} #{profile.lastName} 
+        {{> @userStatus}}
+      </div>
+    """
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
