@@ -20,6 +20,7 @@
           
           "./app/FireKodeInviteView.coffee",
           "./app/FireKodeHeader.coffee",
+          "./app/FireKodeUser.coffee",
           "./app/FireKode.coffee",
           
           "./index.coffee"
@@ -27,7 +28,8 @@
       }
     },
     "stylesheets": [
-      "./resources/style.css"
+      "./resources/style.css",
+      "./app/lib/firepad/examples/firepad-userlist.css"
     ]
   },
   "options": {
