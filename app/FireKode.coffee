@@ -22,7 +22,7 @@ class FireKode extends JView
         mode        : "javascript"
     
       KD.utils.wait 300, =>
-        @firepad = Firepad.fromCodeMirror @firepadRef, @codeMirrorEditor
+        @firepad = Firepad.fromCodeMirror @firepadRef, @codeMirrorEditor, userId: KD.whoami().profile.nickname
         
         @firepad.on "ready", =>
           if @firepad.isHistoryEmpty()
