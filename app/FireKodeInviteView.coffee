@@ -1,8 +1,13 @@
+{nickname} = KD.whoami().profile
+
 class FireKodeInviteView extends JView
   
   constructor: (options = {}, data) ->
     
     super options, data
+    
+    @connectedUsers = {}
+    @userViews      = {}
     
     @label   = new KDView
       cssClass : "firekode-invite-view"
@@ -45,11 +50,20 @@ class FireKodeInviteView extends JView
         
     @userList = new KDView 
       cssClass : "firekode-user-list"
+      
+    @on "FireKodeUserListChanged", (clients) =>
+      @updateUserList clients
+      
+    @on "FireKodeCreateUserList", (clients) =>
+      delete clients[nickname] # remove current user
+      
+      for clientName of clients
+        KD.remote.api.JAccount.one "profile.nickname": clientName, {}, (err, jAccount) =>
+          @showUserInList jAccount, "Connected"
     
   sendRequest: (userAccount) ->
     to         = userAccount.profile.nickname
     {profile}  = KD.whoami()
-    {nickname} = profile
     userName   = "#{profile.firstName} #{profile.lastName} (@#{nickname})"
     subject    = "FireKode Session Request from #{nickname}"
     body       = """
@@ -66,19 +80,32 @@ class FireKodeInviteView extends JView
       Enjoy!
     """
     
+    return if to is nickname
+    
     KD.remote.api.JPrivateMessage.create {
       to
       subject
       body
     }
     
-    @getDelegate().emit "FireKodeUserInvited", to
-    
     @showUserInList userAccount
+    @getDelegate().showNotification "Invitation sent to #{to}"
   
-  showUserInList: (userAccount) ->
-    @userList.addSubView new FireKodeUser {}, userAccount
-  
+  showUserInList: (userAccount, status = "Invited") ->
+    fireKodeUserView = new FireKodeUser { status }, userAccount
+    @userList.addSubView fireKodeUserView
+    @userViews[userAccount.profile.nickname] = fireKodeUserView
+    
+  updateUserList: (clients) ->
+    for username of @userViews
+      userView = @userViews[username]
+      if clients[username]
+        userView.updateStatus "Connected"
+        @connectedUsers[username] = username
+      else if clients[username] is undefined and @connectedUsers[username]
+        userView.updateStatus "Disconnected"
+        delete @connectedUsers[username]
+        
   pistachio: ->
     """
       {{> @label}}
@@ -88,45 +115,3 @@ class FireKodeInviteView extends JView
       {{> @doneButton}}
       {{> @userList}}
     """
-    
-    
-class FireKodeUser extends JView
-
-  constructor: (options = {}, data) ->
-    
-    options.cssClass = "firekode-user"
-    
-    super options, data
-    
-    @avatarView = new AvatarView
-      size     : 
-        width  : 36
-        height : 36
-    , @getData()
-    
-    @userStatus = new KDView
-      partial  : "Invited"
-    
-  updateStatus: (newStatusText) ->
-    @userStatus.updatePartial newStatusText
-  
-  pistachio: ->
-    {profile} = @getData()
-    """
-      {{> @avatarView}}
-      <div class="firekode-user-details">
-        #{profile.firstName} #{profile.lastName} 
-        {{> @userStatus}}
-      </div>
-    """
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
