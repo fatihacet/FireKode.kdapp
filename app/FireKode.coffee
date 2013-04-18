@@ -54,9 +54,7 @@ class FireKode extends JView
     @on "FireKodeUserInvited", (nickname) =>
       return if nickname is KD.whoami().profile.nickname
       @invitedUsers.push nickname
-      new KDNotificationView
-        type     : "tray"
-        content  : "Invitation sent to #{nickname}"
+      @showNotification "Invitation sent to #{nickname}"
         
     @on "KDObjectWillBeDestroyed", =>
       @utils.killRepeat @userListCheckInterval
@@ -70,10 +68,9 @@ class FireKode extends JView
     connectedUsers = @firepad.client_.clients
     @userListCheckInterval = @utils.repeat 500, =>
       for user in @invitedUsers
-        if connectedUsers[user]
+        if connectedUsers[user] and @activeUsers.indexOf(user) is -1
           log "#{user} connected"
-        else if @activeUsers.indexOf(user) > -1
-          log "#{user} disconnected"
+          @activeUsers.push user
       
   joinSession: (key) ->
     appView.destroySubViews()
@@ -81,12 +78,19 @@ class FireKode extends JView
       title   : "Loading your session"
       size    :
         width : 48
-        
+    
     @sessionLoading.show()
     
     appView.addSubView new FireKode
-      sessionKey      : key
-      sharedSession   : yes
+      sessionKey    : key
+      sharedSession : yes
+      
+  showNotification: (content) ->
+    return unless content
+    new KDNotificationView {
+      type : "tray"
+      content
+    }
       
   pistachio: ->
     """
