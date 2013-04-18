@@ -6,7 +6,10 @@ class FireKode extends JView
     
     super options, data
     
-    @sessionKey = @getOptions().sessionKey or "#{KD.utils.generatePassword 18, no}-#{KD.utils.getRandomNumber 9999}-#{KD.utils.generatePassword 18, no}"
+    @activeUsers  = []
+    @invitedUsers = []
+    
+    @sessionKey = @getOptions().sessionKey or "#{KD.utils.generatePassword 18, no}#{KD.utils.getRandomNumber 9999}#{KD.utils.generatePassword 18, no}"
     
     @header = new FireKodeHeader
       delegate: @
@@ -25,6 +28,9 @@ class FireKode extends JView
         @firepad = Firepad.fromCodeMirror @firepadRef, @codeMirrorEditor, userId: KD.whoami().profile.nickname
         
         @firepad.on "ready", =>
+          appView.getSubViews()[0].destroy() if @getOptions().sharedSession
+          @checkUserList()
+          
           if @firepad.isHistoryEmpty()
             @firepad.setText """
               // JavaScript Editing with Firepad!
@@ -33,8 +39,6 @@ class FireKode extends JView
                 console.log(message);
               }
             """
-        
-        appView.getSubViews()[0].destroy() if @getOptions().restoredSession
     
     @inviteView = new FireKodeInviteView
       delegate    : @
@@ -47,6 +51,30 @@ class FireKode extends JView
       sizes       : [ "100%", null ]
       views       : [ @container, @inviteView ]
       
+    @on "FireKodeUserInvited", (nickname) =>
+      return if nickname is KD.whoami().profile.nickname
+      @invitedUsers.push nickname
+      new KDNotificationView
+        type     : "tray"
+        content  : "Invitation sent to #{nickname}"
+        
+    @on "KDObjectWillBeDestroyed", =>
+      @utils.killRepeat @userListCheckInterval
+      @firepad.dispose()
+        
+    # TODO: Remove export
+    window.fk = @
+      
+  checkUserList: ->
+    # TODO: Shouldn't access private member.
+    connectedUsers = @firepad.client_.clients
+    @userListCheckInterval = @utils.repeat 500, =>
+      for user in @invitedUsers
+        if connectedUsers[user]
+          log "#{user} connected"
+        else if @activeUsers.indexOf(user) > -1
+          log "#{user} disconnected"
+      
   joinSession: (key) ->
     appView.destroySubViews()
     appView.addSubView @sessionLoading = new KDLoaderView
@@ -58,7 +86,7 @@ class FireKode extends JView
     
     appView.addSubView new FireKode
       sessionKey      : key
-      restoredSession : yes
+      sharedSession   : yes
       
   pistachio: ->
     """
