@@ -17,7 +17,12 @@
 .firekode-header-buttons {
   padding: 6px 8px 4px 40px !important;
 }
-
+.firekode-user {
+  height: 50px;
+}
+.firekode-user .avatarview, .firekode-user-details {
+  float: left;
+}
 /* firepad.css */
 .firepad {
   /* Default height for a firepad. */
