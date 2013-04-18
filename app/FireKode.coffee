@@ -6,9 +6,6 @@ class FireKode extends JView
     
     super options, data
     
-    @activeUsers  = []
-    @invitedUsers = []
-    
     @sessionKey = @getOptions().sessionKey or "#{KD.utils.generatePassword 18, no}#{KD.utils.getRandomNumber 9999}#{KD.utils.generatePassword 18, no}"
     
     @header = new FireKodeHeader
@@ -29,7 +26,6 @@ class FireKode extends JView
         
         @firepad.on "ready", =>
           appView.getSubViews()[0].destroy() if @getOptions().sharedSession
-          @checkUserList()
           
           if @firepad.isHistoryEmpty()
             @firepad.setText """
@@ -39,6 +35,14 @@ class FireKode extends JView
                 console.log(message);
               }
             """
+            
+        @firepadRef.on "child_changed", (snapshot) =>
+          return unless snapshot.name() is "users"
+          @inviteView.emit "FireKodeUserListChanged", snapshot.val()
+          
+        @firepadRef.on "child_added", (snapshot) =>
+          return unless snapshot.name() is "users"
+          @inviteView.emit "FireKodeCreateUserList", snapshot.val()
     
     @inviteView = new FireKodeInviteView
       delegate    : @
@@ -51,26 +55,12 @@ class FireKode extends JView
       sizes       : [ "100%", null ]
       views       : [ @container, @inviteView ]
       
-    @on "FireKodeUserInvited", (nickname) =>
-      return if nickname is KD.whoami().profile.nickname
-      @invitedUsers.push nickname
-      @showNotification "Invitation sent to #{nickname}"
-        
     @on "KDObjectWillBeDestroyed", =>
       @utils.killRepeat @userListCheckInterval
       @firepad.dispose()
-        
+      
     # TODO: Remove export
     window.fk = @
-      
-  checkUserList: ->
-    # TODO: Shouldn't access private member.
-    connectedUsers = @firepad.client_.clients
-    @userListCheckInterval = @utils.repeat 500, =>
-      for user in @invitedUsers
-        if connectedUsers[user] and @activeUsers.indexOf(user) is -1
-          log "#{user} connected"
-          @activeUsers.push user
       
   joinSession: (key) ->
     appView.destroySubViews()
