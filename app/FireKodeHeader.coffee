@@ -16,28 +16,43 @@ class FireKodeHeader extends JView
         new KDModalView
           overlay  : yes
           title    : "About FireKode"
-          cssClass : "firekode-modal"
+          cssClass : "firekode-about-modal"
+          width    : 500
           content  : """
-            Your session key is: #{@getDelegate().sessionKey}
+            <p>FireKode is an real-time collaborative text editor application for Koding. It provides true collaborative editing with your friends in Koding. Share your session key to start collaborating together.</p>
+            <p>And here is your session key: <strong>#{@getDelegate().sessionKey}</strong></p>
           """
       
     @buttonsContainer.addSubView new KDButtonView
       cssClass  : "editor-button"
       title     : "Join"
       callback  : => @showJoinModal()
+      
+    @inviteViewVisible = no
     
-    @buttonsContainer.addSubView new KDButtonView
-      cssClass  : "editor-button"
-      title     : "Invite Friends"
-      callback  : => @getDelegate().splitView.resizePanel "350px", 1
+    @buttonsContainer.addSubView @inviteButton = new KDButtonView
+      cssClass   : "editor-button firekode-friends-button clean-gray"
+      title      : "Your Friends"
+      callback   : =>
+        width    = "350px"
+        title    = "Close"
+        
+        if @inviteViewVisible 
+          width  = "0px"
+          title  = "Your Friends"
+        
+        @getDelegate().splitView.resizePanel width, 1
+        @inviteButton.updatePartial title
+        @inviteViewVisible = !@inviteViewVisible
   
   showJoinModal : ->
     modal = new KDModalView
       title     : "Join to FireKode session"
+      width     : 420
     
     modal.addSubView new KDView
       cssClass  : "firekode-modal-content"
-      partial   : "Paste your session key to join a session"
+      partial   : "To join a FireKode session, just paste your session key and hit enter."
     
     modal.addSubView new KDHitEnterInputView
       type      : "text"
