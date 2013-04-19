@@ -15,7 +15,7 @@ class FireKode extends JView
       domId : "firekode-container#{KD.utils.getRandomNumber()}"
     
     @container.on "viewAppended", =>
-      @firepadRef = new Firebase("https://firemirror.firebaseIO.com/").child @sessionKey
+      @firepadRef = new Firebase("https://firekode.firebaseIO.com/").child @sessionKey
     
       @codeMirrorEditor = CodeMirror @container.$()[0],
         lineNumbers : true
