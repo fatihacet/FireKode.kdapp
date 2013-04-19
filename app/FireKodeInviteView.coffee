@@ -10,8 +10,8 @@ class FireKodeInviteView extends JView
     @userViews      = {}
     
     @label   = new KDView
-      cssClass : "firekode-invite-view"
-      partial  : "You can invite your friends to this session."
+      cssClass : "firekode-invite-text"
+      partial  : "Type a name to start collabrate together!"
       
     @wrapper = new KDView
       cssClass : "completed-items"
@@ -36,18 +36,16 @@ class FireKodeInviteView extends JView
       if accounts.length > 0 then @inviteButton.enable() else @inviteButton.disable()
         
     @inviteButton = new KDButtonView
+      cssClass : "firekode-invite-button clean-gray"
       title    : "Invite"
       callback : =>
         accounts  = @userController.getSelectedItemData()
-        @sendRequest account for account in accounts when account
+        for account in accounts
+          return if not account or @userViews[account.profile.nickname]
+          @sendRequest account
     
     @inviteButton.disable()
     
-    @doneButton = new KDButtonView
-      title    : "Done"
-      callback : =>
-        @getDelegate().splitView.resizePanel 0, 1
-        
     @userList = new KDView 
       cssClass : "firekode-user-list"
       
@@ -67,17 +65,15 @@ class FireKodeInviteView extends JView
     userName   = "#{profile.firstName} #{profile.lastName} (@#{nickname})"
     subject    = "FireKode Session Request from #{nickname}"
     body       = """
-      Hi #{to}!
+      Hey!
       
-      #{userName} wants to start a FireKode session with you.
+      I want to share my code with you. Come on let's collabrate together.
       
-      To join this session, open FireKode app and click "Join" button and paste your session key to session key field.
+      To join my session, open FireKode app and click "Join" button then paste the session key and hit enter.
       
-      Your session key is: #{@getDelegate().sessionKey}
+      My session key is: #{@getDelegate().sessionKey}
       
       If you don't have FireKode, you can install FireKode app from Koding App catalog.
-      
-      Enjoy!
     """
     
     return if to is nickname
@@ -89,8 +85,8 @@ class FireKodeInviteView extends JView
     }
     
     @showUserInList userAccount
-    @getDelegate().showNotification "Invitation sent to #{to}"
-  
+    @getDelegate().showNotification "Invitation sent to #{to}", 4000
+    
   showUserInList: (userAccount, status = "Invited") ->
     fireKodeUserView = new FireKodeUser { status }, userAccount
     @userList.addSubView fireKodeUserView
@@ -109,9 +105,8 @@ class FireKodeInviteView extends JView
   pistachio: ->
     """
       {{> @label}}
-      {{> @wrapper}}
       {{> @userController.getView()}}
       {{> @inviteButton}}
-      {{> @doneButton}}
+      {{> @wrapper}}
       {{> @userList}}
     """
