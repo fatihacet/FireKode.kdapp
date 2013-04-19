@@ -35,6 +35,11 @@ class FireKode extends JView
                 console.log(message);
               }
             """
+          
+          @utils.wait 10, =>
+            firepadEl = @getDomElement().find ".firepad"
+            firepadEl.height appView.getHeight() - 48
+            firepadEl.width  appView.getWidth()
             
         @firepadRef.on "child_changed", (snapshot) =>
           return unless snapshot.name() is "users"
@@ -50,7 +55,7 @@ class FireKode extends JView
     @splitView = new KDSplitView
       cssClass    : "firekode-split-view"
       type        : "vertical"
-      resizable   : yes
+      resizable   : no
       animated    : yes
       sizes       : [ "100%", null ]
       views       : [ @container, @inviteView ]
@@ -59,15 +64,12 @@ class FireKode extends JView
       @utils.killRepeat @userListCheckInterval
       @firepad.dispose()
       
-    # TODO: Remove export
-    window.fk = @
-      
   joinSession: (key) ->
     appView.destroySubViews()
     appView.addSubView @sessionLoading = new KDLoaderView
-      title   : "Loading your session"
-      size    :
-        width : 48
+      cssClass : "firekode-session-loading"
+      size     :
+        width  : 48
     
     @sessionLoading.show()
     
@@ -75,11 +77,12 @@ class FireKode extends JView
       sessionKey    : key
       sharedSession : yes
       
-  showNotification: (content) ->
+  showNotification: (content, duration = 2000) ->
     return unless content
     new KDNotificationView {
       type : "tray"
       content
+      duration
     }
       
   pistachio: ->
