@@ -102,13 +102,21 @@ class FireKode extends JView
     fileExt  = @utils.getFileExtension path
     fileType = @utils.getFileType fileExt
     return unless fileType is "code" or fileType is "text"
-    KD.getSingleton('kiteController').run "cat #{path}", (err, res) =>
+    KD.getSingleton("kiteController").run "cat #{path}", (err, res) =>
       @firepad.setText res
       @filePath     = path
       @fileInstance = FSHelper.createFileFromPath path
       
   saveFile: ->
-    @fileInstance.save @firepad.getText() if @filePath
+    if @filePath
+      @fileInstance.save @firepad.getText() 
+    else 
+      modal = new FireKodeSaveModal
+        content : @firepad.getText()
+        
+      modal.on "FireKodeFileSaved", (filePath, fileInstance) =>
+        @filePath     = filePath
+        @fileInstance = fileInstance
   
   showNotification: (content, duration = 2000) ->
     return unless content
