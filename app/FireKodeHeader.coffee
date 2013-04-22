@@ -6,6 +6,12 @@ class FireKodeHeader extends JView
     
     super options, data
     
+    @kodingSessionButton = new KDButtonView
+      cssClass  : "editor-button firekode-koding-session"
+      partial   : "Join Koding Session"
+      callback  : =>
+        @getDelegate().joinSession "Koding"
+    
     @buttonsContainer = new KDView
       cssClass  : "header-buttons firekode-header-buttons"
       
@@ -63,5 +69,6 @@ class FireKodeHeader extends JView
   
   pistachio: ->
     """
+      {{> @kodingSessionButton}}
       {{> @buttonsContainer}}
     """
