@@ -6,11 +6,15 @@ class FireKodeHeader extends JView
     
     super options, data
     
-    @kodingSessionButton = new KDButtonView
-      cssClass  : "editor-button firekode-koding-session"
-      partial   : "Join Koding Session"
-      callback  : =>
-        @getDelegate().joinSession "Koding"
+    @kodingSessionButton = new KDCustomHTMLView
+      tagName: "span"
+    
+    if @getDelegate().sessionKey isnt "Koding"
+      @kodingSessionButton = new KDButtonView
+        cssClass  : "editor-button firekode-koding-session"
+        partial   : "Join Koding Session"
+        callback  : =>
+          @getDelegate().joinSession "Koding"
     
     @buttonsContainer = new KDView
       cssClass  : "header-buttons firekode-header-buttons"
