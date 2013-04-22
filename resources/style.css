@@ -25,6 +25,12 @@
   height: 36px;
   margin-bottom: 12px;
 }
+.firekode-drop-target { 
+  position: absolute; 
+  background: rgba(20, 20, 17, 0.74); 
+  opacity: 0.8;
+  z-index: 8000;
+}
 .firekode-user .avatarview, .firekode-user-details {
   float: left;
 }
