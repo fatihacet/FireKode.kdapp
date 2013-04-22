@@ -6,7 +6,9 @@ class FireKode extends JView
     
     super options, data
     
-    @sessionKey = @getOptions().sessionKey or "#{KD.utils.generatePassword 24, no}"
+    @sessionKey   = @getOptions().sessionKey or "#{KD.utils.generatePassword 24, no}"
+    @filePath     = null
+    @fileInstance = null
     
     @header = new FireKodeHeader
       delegate   : @
@@ -26,6 +28,9 @@ class FireKode extends JView
       @codeMirrorEditor = CodeMirror @container.$()[0],
         lineNumbers : true
         mode        : "javascript"
+        extraKeys   : 
+          "Cmd-S"   : => @saveFile()
+          "Ctrl-S"  : => @saveFile()
     
       KD.utils.wait 300, =>
         @firepad = Firepad.fromCodeMirror @firepadRef, @codeMirrorEditor, userId: KD.whoami().profile.nickname
@@ -93,6 +98,18 @@ class FireKode extends JView
       sessionKey    : key
       sharedSession : yes
       
+  openFile: (path) ->
+    fileExt  = @utils.getFileExtension path
+    fileType = @utils.getFileType fileExt
+    return unless fileType is "code" or fileType is "text"
+    KD.getSingleton('kiteController').run "cat #{path}", (err, res) =>
+      @firepad.setText res
+      @filePath     = path
+      @fileInstance = FSHelper.createFileFromPath path
+      
+  saveFile: ->
+    @fileInstance.save @firepad.getText() if @filePath
+  
   showNotification: (content, duration = 2000) ->
     return unless content
     new KDNotificationView {
@@ -100,14 +117,7 @@ class FireKode extends JView
       content
       duration
     }
-    
-  openFile: (path) ->
-    fileExt  = @utils.getFileExtension path
-    fileType = @utils.getFileType fileExt
-    return unless fileType is "code" or fileType is "text"
-    KD.getSingleton('kiteController').run "cat #{path}", (err, res) =>
-      @firepad.setText res
-      
+  
   pistachio: ->
     """
       {{> @dropTarget}}
