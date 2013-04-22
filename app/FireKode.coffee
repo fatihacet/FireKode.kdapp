@@ -6,7 +6,7 @@ class FireKode extends JView
     
     super options, data
     
-    @sessionKey = @getOptions().sessionKey or "#{KD.utils.generatePassword 18, no}#{KD.utils.getRandomNumber 9999}#{KD.utils.generatePassword 18, no}"
+    @sessionKey = @getOptions().sessionKey or "#{KD.utils.generatePassword 24, no}"
     
     @header = new FireKodeHeader
       delegate: @
