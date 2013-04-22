@@ -63,7 +63,7 @@ class FireKodeInviteView extends JView
     to         = userAccount.profile.nickname
     {profile}  = KD.whoami()
     userName   = "#{profile.firstName} #{profile.lastName} (@#{nickname})"
-    subject    = "FireKode Session Request from #{nickname}"
+    subject    = "FireKode Session Request"
     body       = """
       Hey!
       
