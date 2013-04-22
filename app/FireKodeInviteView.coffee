@@ -88,6 +88,7 @@ class FireKodeInviteView extends JView
     @getDelegate().showNotification "Invitation sent to #{to}", 4000
     
   showUserInList: (userAccount, status = "Invited") ->
+    return if @userViews[userAccount.profile.nickname]
     fireKodeUserView = new FireKodeUser { status }, userAccount
     @userList.addSubView fireKodeUserView
     @userViews[userAccount.profile.nickname] = fireKodeUserView
@@ -101,6 +102,10 @@ class FireKodeInviteView extends JView
       else if clients[username] is undefined and @connectedUsers[username]
         userView.updateStatus "Disconnected"
         delete @connectedUsers[username]
+      
+      delete clients[username]
+    
+    @emit "FireKodeCreateUserList", clients
         
   pistachio: ->
     """
