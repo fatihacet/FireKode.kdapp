@@ -9,7 +9,13 @@ class FireKode extends JView
     @sessionKey = @getOptions().sessionKey or "#{KD.utils.generatePassword 24, no}"
     
     @header = new FireKodeHeader
-      delegate: @
+      delegate   : @
+    
+    @dropTarget = new KDView
+      cssClass   : "firekode-drop-target"
+      bind       : "dragstart dragend dragover drop dragenter dragleave"
+      
+    @dropTarget.hide()
     
     @container = new KDView
       domId : "firekode-container#{KD.utils.getRandomNumber()}"
@@ -60,6 +66,16 @@ class FireKode extends JView
       sizes       : [ "100%", null ]
       views       : [ @container, @inviteView ]
       
+    KD.getSingleton("windowController").registerListener
+      KDEventTypes: ["DragEnterOnWindow", "DragExitOnWindow"]
+      listener    : @
+      callback    : (pubInst, event) =>
+        @dropTarget.show()
+        @dropTarget.hide() if event.type is "drop"
+    
+    @dropTarget.on "drop", (e) =>
+      @openFile e.originalEvent.dataTransfer.getData 'Text'
+      
     @on "KDObjectWillBeDestroyed", =>
       @utils.killRepeat @userListCheckInterval
       @firepad.dispose()
@@ -84,9 +100,17 @@ class FireKode extends JView
       content
       duration
     }
+    
+  openFile: (path) ->
+    fileExt  = @utils.getFileExtension path
+    fileType = @utils.getFileType fileExt
+    return unless fileType is "code" or fileType is "text"
+    KD.getSingleton('kiteController').run "cat #{path}", (err, res) =>
+      @firepad.setText res
       
   pistachio: ->
     """
+      {{> @dropTarget}}
       {{> @header}}
       {{> @splitView}}
     """
